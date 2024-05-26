@@ -6,29 +6,38 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class PlayerConfigurator : MonoBehaviour
 {
     [SerializeField] private Transform m_HatAnchor;
-    [SerializeField] private AssetReferenceGameObject m_HatAssetReference;
+    [SerializeField] private GameObject m_HatInstance;
 
     private AsyncOperationHandle<GameObject> m_HatLoadOpHandle;
 
     void Start()
     {           
-        SetHat(string.Format("Hat{0:00}", GameManager.s_ActiveHat));
+        LoadInRandomHat();
     }
 
-    public void SetHat(string hatKey)
+    void Update()
     {
-        if(!m_HatAssetReference.RuntimeKeyIsValid())
+        if(Input.GetMouseButtonUp(1))
         {
-            return;
-        }
+            Destroy(m_HatInstance);
+            Addressables.ReleaseInstance(m_HatLoadOpHandle);
 
-        m_HatLoadOpHandle = m_HatAssetReference.LoadAssetAsync<GameObject>();
+            LoadInRandomHat();
+        }
+    }
+
+    public void LoadInRandomHat()
+    {
+        int randomIndex = Random.Range(0, 6);
+        string hatAddress = string.Format("Hat{0:00}", randomIndex);
+
+        m_HatLoadOpHandle = Addressables.LoadAssetAsync<GameObject>(hatAddress);
         m_HatLoadOpHandle.Completed += OnHatLoadComplete;
     }
 
     private void OnHatLoadComplete(AsyncOperationHandle<GameObject> asyncOperationHandle)
     {
-        Instantiate(asyncOperationHandle.Result, m_HatAnchor);
+        m_HatInstance = Instantiate(asyncOperationHandle.Result, m_HatAnchor);
     }
 
     private void OnDisable()
