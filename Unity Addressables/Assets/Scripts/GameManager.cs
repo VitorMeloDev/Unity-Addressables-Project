@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
     
-    [SerializeField] private string m_LogoAddress;
+    [SerializeField] private AssetReferenceSprite m_LogoAssetReference;
     private AsyncOperationHandle<Sprite> m_LogoLoadOpHandle;
 
     public static int s_CurrentLevel = 0;
@@ -38,7 +38,12 @@ public class GameManager : MonoBehaviour
         // When we go to the 
         s_CurrentLevel = 0;
 
-        m_LogoLoadOpHandle = Addressables.LoadAssetAsync<Sprite>(m_LogoAddress);
+        if(!m_LogoAssetReference.RuntimeKeyIsValid())
+        {
+            return;
+        }
+
+        m_LogoLoadOpHandle = m_LogoAssetReference.LoadAssetAsync<Sprite>();
         m_LogoLoadOpHandle.Completed += OnLogoLoadComplete;
     }
 
