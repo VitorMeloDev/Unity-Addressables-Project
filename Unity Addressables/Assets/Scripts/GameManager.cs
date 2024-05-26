@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Reflection;
@@ -11,6 +12,8 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private AssetReferenceSprite m_LogoAssetReference;
     private AsyncOperationHandle<Sprite> m_LogoLoadOpHandle;
+
+    private static AsyncOperationHandle<SceneInstance> m_SceneLoaoOpHandle;
 
     public static int s_CurrentLevel = 0;
 
@@ -67,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     public static void LoadNextLevel()
     {
-        SceneManager.LoadSceneAsync("LoadingScene");
+        m_SceneLoaoOpHandle = Addressables.LoadSceneAsync("LoadingScene", activateOnLoad: true);
     }
 
     public static void LevelCompleted()
