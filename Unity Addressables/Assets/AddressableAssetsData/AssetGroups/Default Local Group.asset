@@ -48,7 +48,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c3a9b5d611a35464a8e473e4249a1df9
-    m_Address: Assets/Resources_moved/LoadyDungeonsLogo.png
+    m_Address: LoadyDungeonsLogo
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
