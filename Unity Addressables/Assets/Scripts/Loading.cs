@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.UI;
 
 public class Loading : MonoBehaviour
@@ -15,7 +16,7 @@ public class Loading : MonoBehaviour
     [SerializeField]
     private GameObject m_PlayButton, m_LoadingText;
 
-    private void Awake()
+   private void Awake()
     {
         StartCoroutine(loadNextLevel("Level_0" + GameManager.s_CurrentLevel));
     }
@@ -24,16 +25,19 @@ public class Loading : MonoBehaviour
     {
         m_SceneLoadOpHandle = Addressables.LoadSceneAsync(level, activateOnLoad: true);
 
-        while (!m_SceneLoadOpHandle.IsDone)
+        yield return m_SceneLoadOpHandle;
+
+        if (m_SceneLoadOpHandle.Status == AsyncOperationStatus.Succeeded)
         {
-            m_LoadingSlider.value = m_SceneLoadOpHandle.PercentComplete;
+            while (!m_SceneLoadOpHandle.IsDone)
+            {
+                m_LoadingSlider.value = m_SceneLoadOpHandle.PercentComplete;
 
-            if (m_SceneLoadOpHandle.PercentComplete >= 0.9f && !m_PlayButton.activeInHierarchy)
-                m_PlayButton.SetActive(true);
+                if (m_SceneLoadOpHandle.PercentComplete >= 0.9f && !m_PlayButton.activeInHierarchy)
+                    m_PlayButton.SetActive(true);
 
-            yield return null;
+                yield return null;
+            }
         }
-
-        Debug.Log($"Loaded Level {level}");
     }
 }
